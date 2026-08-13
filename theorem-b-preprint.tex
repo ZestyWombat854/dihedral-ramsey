@@ -1,0 +1,504 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\usepackage{xcolor}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{proposition}[theorem]{Proposition}
+
+\theoremstyle{definition}
+\newtheorem*{remark}{Remark}
+
+\newcommand{\Dih}{\mathrm{Dih}}
+\newcommand{\Sym}{\mathrm{Sym}}
+\newcommand{\Cyc}{\mathrm{Cyc}}
+\newcommand{\Rdih}{R_{\mathrm{dih}}}
+\newcommand{\Rcyc}{R_{\mathrm{cyc}}}
+\newcommand{\Palt}{P_3^{\mathrm{alt}}}
+
+\title{The $a=3$ slice of two permutational Ramsey conjectures:\\
+$\Rdih(\Palt, K_b) = \Rcyc(\Palt, K_b) = 2b-1$ for all $b$}
+
+\author{ZestyWombat854}
+\date{Draft v1 --- 2026-08-12}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+For $b \in \mathbb{N}$ let $\Rdih(\Palt, K_b)$ denote the dihedral Ramsey number,
+in the sense of Damnjanovi\'c--\DJ{}or\dj{}evi\'c~\cite{DD26}, of the alternating path
+of order~3 against the complete graph~$K_b$. We prove $\Rdih(\Palt, K_b) = 2b-1$
+for all~$b$ --- the $a=3$ slice of \cite[Conjecture~4.9]{DD26} --- and
+$\Rcyc(\Palt, K_b) = 2b-1$ for all~$b$ --- the $a=3$ slice of
+\cite[Conjecture~4.23]{Bas26}. The dihedral case rests on an order argument
+special to three vertices: $\Dih(3) = \Sym(3)$, so rotations and reflections
+already exhaust all relabelings, dihedral embeddability collapses to ordinary
+subgraph containment, and Chv\'atal's 1977 tree--complete-graph theorem applies.
+The cyclic case does not follow from the reflection-symmetry reduction of
+\cite[Corollary~2.5]{DD26} --- $\Palt$ lacks reflection symmetry --- but does
+follow from an orbit-equality argument via \cite[Proposition~2.4]{DD26}. A
+block-partition construction, valid for every connected pattern and every
+permutation group, gives the matching lower bound.
+
+The identity was corroborated by direct SAT computation on the raw dihedral
+encoding for $b = 2,\ldots,7$, and $b=3$ is fully machine-verified by the
+accompanying standalone script; the lower bound for every~$b$, and the
+$\Dih(3)=\Sym(3)$ collapse, are additionally machine-verified in Lean~4 (the
+upper bound is the citation). The upper bound for patterns of order $a \ge 4$
+remains open.
+\end{abstract}
+
+%----------------------------------------------------------------------
+\section{History and the two conjectures}
+
+Damnjanovi\'c and \DJ{}or\dj{}evi\'c~\cite{DD26} compute small \emph{reflective} and
+\emph{dihedral} Ramsey numbers --- permutational Ramsey numbers under reflection
+or dihedral symmetry groups --- by SAT encoding under fixed solver budgets, and
+state several closed-form conjectures that their own tables support only as
+computed cells or unproved lower bounds. The one this note closes at $a=3$ reads,
+verbatim:
+
+\begin{quote}
+\textbf{Conjecture~4.9}~\cite{DD26}.\quad For any $a, b \in \mathbb{N}$, we have
+$\Rdih(P_a^{\mathrm{alt}}, K_b) = 1 + (a-1)(b-1)$.
+\end{quote}
+
+For the \emph{cyclic} variant of the same pairing, \cite{DD26}'s Table~2 records
+the matching conjecture from the companion paper of Ba\v{s}i\'c, Damnjanovi\'c,
+Stevanovi\'c, and Sto\v{s}i\'c, citing it as \cite[Conjecture~4.23]{Bas26}:
+
+\begin{quote}
+\textbf{Conjecture~4.23}~\cite{Bas26}.\quad
+$\Rcyc(P_a^{\mathrm{alt}}, K_b) = 1 + (a-1)(b-1)$ for $a, b \in \mathbb{N}$.
+\end{quote}
+
+At $a=3$ both right-hand sides equal $2b-1$.
+
+\medskip\noindent\textbf{What is and is not new here.}\quad
+\cite{Bas26}'s companion repository already tabulates cyclic values matching
+$2b-1$ for $b = 3,\ldots,8$ as ordinary computed SAT cells (we traced them to the
+underlying solver logs, not just the summary table), without stating a closed form.
+The new content of this note is therefore: the closed form itself (all~$b$, not six
+data points), its proof (a citation chain plus two group-theoretic facts, not a
+search), and --- for the \emph{dihedral} value, which \cite{Bas26} never tabulates
+directly --- a new all-$b$ closed form. The $b = 3,\ldots,8$ cyclic arithmetic is
+not new.
+
+%----------------------------------------------------------------------
+\section{Definitions}
+
+All definitions are restated from \cite[\S\S1--2]{DD26}.
+
+\medskip\noindent\textbf{Permutational Ramsey numbers.}\quad
+For graphs $H_1, \ldots, H_k$ on vertex sets $\{0, \ldots, |H_j|-1\}$ and
+permutation groups $\Gamma_j$ on $V(H_j)$, the graph~$H_j$ is
+\textbf{$\Gamma_j$-embeddable} in a graph~$G$ (on a totally ordered vertex set)
+if there is a homomorphism $H_j \to G$ of the form $\psi \circ \varphi$, where
+$\varphi \in \Gamma_j$ and $\psi: V(H_j) \to V(G)$ is an \textbf{increasing}
+injection. Only the pattern's own vertices may be permuted (by~$\varphi$); the
+placement~$\psi$ into the host's fixed vertex order must be order-preserving. The
+\textbf{permutational Ramsey number} $R(H_1^{\Gamma_1}, \ldots, H_k^{\Gamma_k})$
+is the least~$n$ such that every $k$-edge-coloring of~$K_n$ contains, for some
+color~$j$, a $\Gamma_j$-embedded copy of~$H_j$ in color~$j$.
+
+The increasing-injection requirement is the substance of the definition: arbitrary
+relabelings of the host~$K_n$ are \emph{not} a symmetry of the problem --- only
+the pattern's own group~$\Gamma_j$ is. This is exactly why the choice of group
+matters and why the theorem below is not vacuous.
+
+\medskip\noindent\textbf{The groups.}\quad
+For a pattern of order~$m$ on $\{0, \ldots, m-1\}$, the \textbf{dihedral group}
+$\Dih(m) = \langle \sigma, \rho \rangle$ where $\sigma(i) = i+1 \pmod{m}$ is the
+rotation and $\rho(i) = m-1-i$ the reflection; $|\Dih(m)| = 2m$. The
+\textbf{cyclic group} $\Cyc(m) = \langle \sigma \rangle$ has order~$m$.
+$\Rdih$ (resp.\ $\Rcyc$) denotes the permutational Ramsey number in which every
+$\Gamma_j$ is the dihedral (resp.\ cyclic) group of its own pattern~$H_j$. Taking
+every $\Gamma_j$ to be $\Sym(|H_j|)$ recovers the classical Ramsey number
+\cite[\S1]{DD26}: with all relabelings available, any ordinary subgraph copy can
+be pre-permuted so that its placement is increasing.
+
+\medskip\noindent\textbf{$\Gamma$-isomorphism.}\quad
+$F \cong_\Gamma H$ iff some isomorphism from~$F$ to~$H$ is an element
+of~$\Gamma$ \cite[\S2]{DD26}; its equivalence classes are the $\Gamma$-orbits of
+labeled patterns. Two facts from~\cite{DD26} are used below:
+
+\begin{quote}
+\textbf{Proposition~2.1}~\cite{DD26}.\quad Let $H_1, \ldots, H_k$ be graphs and
+$\Gamma_1, \ldots, \Gamma_k$ permutation groups on their respective vertex sets.
+If $F_j \cong_{\Gamma_j} H_j$ for each~$j$, then
+$R(F_1^{\Gamma_1}, \ldots, F_k^{\Gamma_k}) =
+R(H_1^{\Gamma_1}, \ldots, H_k^{\Gamma_k})$.
+\end{quote}
+
+\begin{quote}
+\textbf{Proposition~2.4}~\cite{DD26}.\quad Let $H_1, \ldots, H_k$ be graphs, and
+$\Gamma_1, \ldots, \Gamma_k$ and $\Lambda_1, \ldots, \Lambda_k$ permutation
+groups on their respective vertex sets. If, for each~$j$, $H_j$ lies in the same
+equivalence class under both $\cong_{\Gamma_j}$ and $\cong_{\Lambda_j}$, then
+$R(H_1^{\Lambda_1}, \ldots, H_k^{\Lambda_k}) =
+R(H_1^{\Gamma_1}, \ldots, H_k^{\Gamma_k})$.
+\end{quote}
+
+\medskip\noindent\textbf{The pattern.}\quad
+The alternating path $P_a^{\mathrm{alt}}$ is the path on $\{0, \ldots, a-1\}$
+whose vertex sequence is $(0, a{-}1, 1, a{-}2, \ldots)$, with edges between
+consecutive terms. For $a=3$ the sequence is $(0,2,1)$, so
+\[
+  \Palt = \text{the path } 0\text{--}2\text{--}1, \quad
+  \text{edges } \{0,2\} \text{ and } \{1,2\}, \quad
+  \text{center vertex } 2.
+\]
+
+%----------------------------------------------------------------------
+\section{$\Dih(3)$, concretely}
+
+$\Dih(3)$ is generated by $\sigma = (0 \mapsto 1 \mapsto 2 \mapsto 0)$ and
+$\rho = (0 \leftrightarrow 2$, fixing~$1)$. Its six elements, as permutations
+(images of $0, 1, 2$ in order):
+
+\medskip
+\begin{center}
+\begin{tabular}{@{}lccc@{}}
+\toprule
+element & $0 \mapsto$ & $1 \mapsto$ & $2 \mapsto$ \\
+\midrule
+$\mathrm{id}$ & 0 & 1 & 2 \\
+$\sigma$      & 1 & 2 & 0 \\
+$\sigma^2$    & 2 & 0 & 1 \\
+$\rho$        & 2 & 1 & 0 \\
+$\sigma\rho$  & 0 & 2 & 1 \\
+$\sigma^2\rho$& 1 & 0 & 2 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\medskip
+These are six distinct permutations of a three-element set, and $\Sym(3)$ has
+$3! = 6$ elements in total. That observation is Lemma~\ref{lem:dih3} below; the
+point of listing the elements is that nothing is hidden --- for three vertices,
+rotations and reflections already produce every relabeling.
+
+%----------------------------------------------------------------------
+\section{Lemma~1: $K_b$-embeddability is group-independent}
+
+\begin{lemma}\label{lem:kb}
+For any $b \in \mathbb{N}$, $n \ge b$, any graph~$G$ on $\{0, \ldots, n-1\}$,
+and any permutation group~$\Gamma$ on $\{0, \ldots, b-1\}$: $K_b$ is
+$\Gamma$-embeddable in~$G$ if and only if~$G$ contains a clique of size~$b$.
+\end{lemma}
+
+\begin{proof}
+($\Leftarrow$) Let $v_0 < v_1 < \cdots < v_{b-1}$ be the vertices of a
+$b$-clique of~$G$. Take $\psi(i) = v_i$ and $\varphi = \mathrm{id} \in \Gamma$.
+Every pair of $K_b$'s vertices is an edge, and every image pair is a clique edge.
+
+($\Rightarrow$) $\psi \circ \varphi$ is injective ($\varphi$ is a bijection,
+$\psi$ an injection), and every pair of $K_b$'s vertices is an edge, so the $b$
+image vertices are pairwise adjacent in~$G$ --- a clique.
+\end{proof}
+
+%----------------------------------------------------------------------
+\section{Lemma~2: the block-partition lower bound}
+
+\begin{lemma}\label{lem:lower}
+Let $a, b \ge 1$ and $n = (a-1)(b-1)$. Fix any partition of $\{0, \ldots, n-1\}$
+into $b-1$ blocks of size $a-1$ (contiguous or not), any connected graph~$H$ of
+order~$a$, and any permutation groups~$\Gamma$ (on $V(H)$) and $\Lambda$ (on
+$V(K_b)$). Color every same-block pair with color~1 and every cross-block pair
+with color~2. Then color~1 contains no $\Gamma$-embedded~$H$ and color~2 contains
+no $\Lambda$-embedded~$K_b$; consequently
+\[
+  R(H^\Gamma, K_b^\Lambda) \ge 1 + (a-1)(b-1).
+\]
+\end{lemma}
+
+\begin{proof}
+Color~1's graph is a disjoint union of $b-1$ cliques $K_{a-1}$. The image of~$H$
+under the injective homomorphism $\psi \circ \varphi$ is a connected subgraph on
+$a$ vertices, hence lies inside a single component --- but each component has only
+$a-1 < a$ vertices. So color~1 has no $\Gamma$-embedded~$H$.
+
+Color~2's graph is the complete $(b{-}1)$-partite complement; by
+Lemma~\ref{lem:kb} a $\Lambda$-embedded $K_b$ requires a color-2 clique of
+size~$b$, but any $b$ vertices distributed among $b-1$ blocks share a block by
+pigeonhole, and that pair has color~1.
+\end{proof}
+
+Specializing $H = P_a^{\mathrm{alt}}$ (connected, order~$a$) and $\Gamma = \Dih(a)$,
+$\Lambda = \Dih(b)$: $\Rdih(P_a^{\mathrm{alt}}, K_b) \ge 1 + (a-1)(b-1)$ for all
+$a, b \in \mathbb{N}$ --- the lower-bound half of \cite[Conjecture~4.9]{DD26} in
+full generality. For $a=3$ the witness is $b-1$ disjoint ``dominoes'' (red blocks
+of size~2) on $2b-2$ vertices; the accompanying script constructs and checks it
+exhaustively for $b = 2,\ldots,8$.
+
+%----------------------------------------------------------------------
+\section{Lemma~3: $\Dih(3) = \Sym(3)$}
+
+\begin{lemma}\label{lem:dih3}
+As sets of permutations of $\{0, 1, 2\}$, $\Dih(3) = \Sym(3)$.
+\end{lemma}
+
+\begin{proof}
+$\Dih(3)$'s generators are permutations of $\{0, 1, 2\}$, so
+$\Dih(3) \le \Sym(3)$. $|\Dih(3)| = 2 \cdot 3 = 6 = 3! = |\Sym(3)|$, and a
+subgroup with the same order as its ambient finite group equals it.
+\end{proof}
+
+Equivalently: a 3-cycle and a transposition already generate all of $\Sym(3)$.
+This collapse is unique to $a=3$: for every $a \ge 4$,
+$|\Dih(a)| = 2a < a!$, and indeed $\Dih(a) \ne \Sym(a)$.
+
+%----------------------------------------------------------------------
+\section{The theorem}
+
+\begin{theorem}\label{thm:main}
+$\Rdih(\Palt, K_b) = 2b-1$ for all $b \in \mathbb{N}$.
+\end{theorem}
+
+\begin{proof}
+By Lemma~\ref{lem:dih3}, $(\Palt)^{\Dih(3)}$-embeddability \emph{is}
+$(\Palt)^{\Sym(3)}$-embeddability --- the same group, hence literally the same
+relation. By Lemma~\ref{lem:kb}, the group attached to the $K_b$ argument is
+irrelevant, so $\Dih(b)$ may be replaced by $\Sym(b)$ without changing any
+embeddability predicate. With every group now the full symmetric group, the
+permutational Ramsey number is the classical one \cite[\S1]{DD26}:
+\[
+  \Rdih(\Palt, K_b) = R((\Palt)^{\Sym(3)}, K_b^{\Sym(b)}) = R(P_3, K_b),
+\]
+where $P_3$ denotes the (unlabeled) path of order~3 --- as an unlabeled graph,
+$\Palt$ is the unique tree on 3 vertices, and Proposition~2.1 (with symmetric
+groups, whose orbits are exactly unlabeled-isomorphism classes) makes the choice
+of labeled representative irrelevant. Chv\'atal's tree--complete-graph theorem,
+restated verbatim in~\cite{DD26}:
+
+\begin{quote}
+\textbf{Theorem~4.13}~\cite[quoting \cite{Chv77}]{DD26}.\quad For any
+$a, b \in \mathbb{N}$ and tree~$T$ of order~$a$,
+$R(T, K_b) = 1 + (a-1)(b-1)$.
+\end{quote}
+
+With $a=3$: $R(P_3, K_b) = 1 + 2(b-1) = 2b-1$.
+\end{proof}
+
+\begin{remark}
+The \emph{lower} bound is also proved directly and independently by
+Lemma~\ref{lem:lower}, so the only step of this note that rests on a citation
+rather than a self-contained argument is the upper bound
+$R(P_3, K_b) \le 2b-1$ inside Theorem~4.13.
+\end{remark}
+
+%----------------------------------------------------------------------
+\section{The cyclic corollary --- and why it is not the
+         reflection-symmetry route}
+
+A natural first guess is \cite[Corollary~2.5]{DD26}: for graphs with
+\emph{reflection symmetry} (the map $\varphi(x) = |H|-1-x$ is an automorphism),
+$\Rdih = \Rcyc$. That corollary \textbf{does not apply} to~$\Palt$: under
+$\varphi(x) = 2-x$, the edge $\{0,2\}$ is fixed, but
+$\{1,2\} \mapsto \{1,0\} = \{0,1\}$, which is not an edge of~$\Palt$. $\Palt$
+lacks reflection symmetry.
+
+The mechanism that does work is Proposition~2.4, an orbit-equality condition
+strictly weaker than an automorphism requirement.
+
+\medskip\noindent\textbf{Orbit computation.}\quad
+The $\Cyc(3)$-orbit of~$\Palt$: applying~$\sigma$ to the edge set
+$\{\{0,2\},\{1,2\}\}$ gives $\{\{1,0\},\{2,0\}\}$ (center~0); applying~$\sigma^2$
+gives $\{\{2,1\},\{0,1\}\}$ (center~1). So the orbit is the three labeled 3-paths
+with center $2, 0, 1$ respectively. The $\Sym(3)$-orbit of~$\Palt$ is the set of
+\emph{all} labeled copies of the 3-path on $\{0,1,2\}$ --- and a labeled 3-path
+is determined by its center, so that orbit is the same three graphs. The two orbits
+are equal: a coincidence of a 3-vertex tree having only 3 labeled shapes at all,
+each reachable by rotation alone --- nothing to do with reflection. On the other
+side, the orbit of $K_b$ under any permutation group is the singleton $\{K_b\}$.
+
+\begin{corollary}\label{cor:cyclic}
+$\Rcyc(\Palt, K_b) = 2b-1$ for all $b \in \mathbb{N}$ --- the $a=3$ slice of
+\cite[Conjecture~4.23]{Bas26}.
+\end{corollary}
+
+\begin{proof}
+Proposition~2.4, applied coordinate-wise with
+$(\Gamma_1, \Lambda_1) = (\Cyc(3), \Sym(3))$ on~$\Palt$ (orbits equal, as
+computed) and $(\Gamma_2, \Lambda_2) = (\Cyc(b), \Sym(b))$ on~$K_b$ (orbits
+trivially equal), gives
+$\Rcyc(\Palt, K_b) = R((\Palt)^{\Sym(3)}, K_b^{\Sym(b)}) = R(P_3, K_b)$ ---
+the same classical anchor as in Theorem~\ref{thm:main}, hence the same value
+$2b-1$.
+\end{proof}
+
+The cyclic and dihedral values are thus equal, but by two different mechanisms
+meeting at a shared classical anchor --- not by one being a one-line consequence
+of the other.
+
+%----------------------------------------------------------------------
+\section{Numeric corroboration}
+
+The following computations corroborate the theorem; they are
+\textbf{corroboration, not proof} (the proof is \S\S4--8).
+
+\medskip\noindent\textbf{Direct SAT recomputation on the raw dihedral encoding}
+(i.e., encoding $\Dih(3)$ and $\Dih(b)$ as-is, \emph{not} using the
+$\Sym$-collapse --- an independent check of the conclusion, not just the proof
+steps), carried out during adversarial review:
+
+\medskip
+\begin{center}
+\begin{tabular}{@{}ccccc@{}}
+\toprule
+$b$ & predicted $2b{-}1$ & SAT at $2b{-}2$ & UNSAT at $2b{-}1$ (DRAT) & match \\
+\midrule
+2 &  3 & verified & drat-trim VERIFIED & YES \\
+3 &  5 & verified & drat-trim VERIFIED & YES \\
+4 &  7 & verified & drat-trim VERIFIED & YES \\
+5 &  9 & verified & drat-trim VERIFIED & YES \\
+6 & 11 & verified & drat-trim VERIFIED & YES \\
+7 & 13 & verified & drat-trim VERIFIED & YES \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\medskip
+6/6 exact matches. A bonus check swapped $K_5$'s group from $\Dih(5)$ (order~10)
+to $\Sym(5)$ (order~120) inside the actual encoding and reproduced an identical
+SAT@8/UNSAT@9 boundary --- a direct in-chain exercise of Lemma~\ref{lem:kb}.
+
+\medskip\noindent\textbf{Accompanying script.}\quad
+\texttt{verify\_theorem\_b.py} is a standalone stdlib-Python checker that
+(i)~builds $\Dih(3)$ by generator closure --- it does \emph{not} assume
+Lemma~\ref{lem:dih3} --- and re-derives $|\Dih(3)| = 6 = |\Sym(3)|$;
+(ii)~constructs Lemma~\ref{lem:lower}'s witness coloring and exhaustively verifies
+$\Rdih(\Palt, K_b) \ge 2b-1$ for $b = 2,\ldots,8$; and
+(iii)~at $b=3$ exhaustively checks all 1,024 colorings of~$K_5$, so
+$\Rdih(\Palt, K_3) = 5$ is machine-verified in both directions by the script
+alone. It also checks Corollary~\ref{cor:cyclic}'s orbit-equality premise
+explicitly: the $\Cyc(3)$-orbit of $\Palt$ equals the $\Sym(3)$-orbit --- the
+three center-labelings --- and $K_b$'s orbit is a singleton ($\Dih(b)$ for
+$b = 2,\ldots,8$, all of $\Sym(b)$ for $b = 2,\ldots,5$); the
+Proposition~2.4 application itself remains a citation.
+
+\medskip\noindent\textbf{Accompanying Lean proof.}\quad
+\texttt{TheoremB.lean} is a standalone Lean~4 file --- core only, no mathlib, no
+imports --- whose main theorem, \texttt{theoremB\_lowerBound}, machine-checks the
+lower-bound half of Theorem~\ref{thm:main} \emph{for every $b \ge 1$ at once}: a
+genuine $\forall b$ theorem, not per-instance enumeration. It also proves
+Lemma~\ref{lem:dih3} ($\Dih(3) = \Sym(3)$, both inclusions) and a
+group-invariance lemma for~$K_b$. Axiom audit: \texttt{propext},
+\texttt{Classical.choice}, \texttt{Quot.sound} only; no \texttt{native\_decide},
+no \texttt{sorry}.
+
+%----------------------------------------------------------------------
+\section{What remains open}
+
+The general upper bound ($a \ge 4$) resists the two standard strategies --- a
+diagnosis, not a hardness proof.
+(1)~Mirroring \cite{DD26}'s own pigeonhole-induction (their Theorem~4.1
+mechanism): growing $K_b$ against a fixed dihedral pattern only shows \emph{some}
+embedding of $P_a^{\mathrm{alt}}$ exists, with no control over \emph{which} of
+$\Dih(a)$'s admissible shapes it is.
+(2)~The classical Chv\'atal degree-split induction: its greedy tree-embedding
+lemma has the identical defect.
+
+The $\Dih(a)$-orbit of $P_a^{\mathrm{alt}}$ has exactly $a$ distinct ``zigzag''
+shapes out of $a!/2$ labeled paths; both mechanisms certify ``some shape,
+unrestricted,'' and neither supplies leverage on which. For $a \ge 4$ the
+Lemma~\ref{lem:dih3} collapse is unavailable ($|\Dih(a)| = 2a < a!$), so the
+$a=3$ route does not extend. No counterexample to Conjecture~4.9 was found; the
+obstruction is proof technique, not evidence against the conjecture.
+
+%----------------------------------------------------------------------
+\section{Provenance, verification status, and scope}
+
+This work was carried out autonomously by an AI system (Claude, Anthropic) on
+2026-08-11/12, as one lane of a larger Ramsey-theory research run on a single
+laptop. Human direction was limited to initiation and operational supervision.
+
+\medskip\noindent\textbf{Verification status, stated precisely:}
+
+\begin{itemize}
+\item \textbf{Adversarial review} was performed by AI saboteur agents within the
+  same pipeline --- independent re-derivation of all three lemmas; direct SAT
+  recomputation of $b = 2,\ldots,7$ on the raw dihedral encoding with DRAT
+  certificates checked by drat-trim; a verbatim citation audit of every
+  \cite{DD26} statement used; and, for Corollary~\ref{cor:cyclic}, an independent
+  orbit recomputation plus exhaustive both-boundary brute force at $b = 2, 3, 4$
+  bypassing both Proposition~2.4 and the theorem. Zero refutations; one
+  immaterial tally slip in motivational text was found and corrected.
+  \textbf{No human mathematician has reviewed these claims.}
+
+\item \textbf{Partially formally verified (Lean~4).} The lower bound
+  $\Rdih(\Palt, K_b) \ge 2b-1$ for every $b \ge 1$ and Lemma~\ref{lem:dih3}
+  ($\Dih(3) = \Sym(3)$) are machine-checked in Lean~4 core (no mathlib; axioms
+  \texttt{propext}, \texttt{Classical.choice}, \texttt{Quot.sound}; no
+  \texttt{native\_decide}), in the package's standalone \texttt{TheoremB.lean},
+  which also contains the run's Lean-proved parallel of Lemma~1 and builds on
+  its definitions. \textbf{The upper bound is not formalized} --- neither
+  Chv\'atal's theorem nor the reduction steps that reach it.
+
+\item \textbf{Chv\'atal 1977 is cited second-hand}, via its verbatim restatement
+  as \cite[Theorem~4.13]{DD26}; the 1977 original was not consulted.
+
+\item \textbf{A disclosed reproducibility gap:} the producing lane's original
+  scratch scripts were never committed. Every numeric outcome the adversarial
+  reviewer re-ran reproduced exactly, and the accompanying script re-verifies
+  the lower bounds and the $b=3$ cell from scratch.
+
+\item \textbf{Novelty:} same-day arXiv version checks and targeted searches
+  (2026-08-12) found no prior statement or proof of the closed form or of the
+  $\Dih(3) = \Sym(3)$ mechanism applied to this pairing. The final Semantic
+  Scholar pass was rate-limited and relied on three same-day zero-citation
+  fetches earlier that day.
+\end{itemize}
+
+\medskip\noindent\textbf{Scope.}\quad
+This note treats the dihedral and cyclic cases only. The ordered and reflective
+variants are not part of this result. The full conjectures ($a \ge 4$) remain open
+(see \S10).
+
+\medskip
+{\small
+\begin{verbatim}
+===== NOT DONE =====
+- Ordered and reflective variants of the same a=3 pairing: not included;
+  this note makes no claim, in either direction, about their status.
+- a >= 4: nothing proved; Conjecture 4.9 remains open there (Section 10
+  records exactly where the standard techniques stop).
+- Upper bound not formalized: the Lean file verifies the lower bound
+  (every b), Lemma 3, and a Lemma-1 parallel, and nothing else; the
+  upper bound rests on the citation chain through [DD26, Theorem 4.13].
+- No human peer review; adversarial review was AI-internal.
+WHAT IT WOULD CHANGE: a gap in the upper bound's citation chain (the
+Sym-collapse-to-classical step, Proposition 2.1/2.4's application, or
+the Chvatal statement) would invalidate the UPPER bounds beyond the
+SAT-verified range (b = 2..7 dihedral, b = 3..8 cyclic); the LOWER
+bounds stand on kernel-checked proof for every b regardless. A prior
+publication of either closed form would change this note's contribution
+from new-result to rediscovery.
+\end{verbatim}
+}
+
+\begin{thebibliography}{9}
+\bibitem{DD26}
+I.~Damnjanovi\'c and I.~\DJ{}or\dj{}evi\'c,
+\emph{Computation of small reflective and dihedral Ramsey numbers},
+arXiv:2607.06817v2 [math.CO], 12 Jul 2026.
+
+\bibitem{Bas26}
+N.~Ba\v{s}i\'c, I.~Damnjanovi\'c, D.~Stevanovi\'c, and I.~Sto\v{s}i\'c,
+\emph{Some results on small ordered and cyclic Ramsey numbers},
+arXiv:2604.16188v1 [math.CO], 17 Apr 2026.
+
+\bibitem{Chv77}
+V.~Chv\'atal,
+Tree-complete graph Ramsey numbers,
+\emph{J.~Graph Theory} \textbf{1} (1977), 93.
+Cited via its verbatim restatement as \cite[Theorem~4.13]{DD26}.
+\end{thebibliography}
+
+\end{document}

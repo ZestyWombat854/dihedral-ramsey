@@ -1,0 +1,319 @@
+{
+  "script": "verify_theorem_b.py",
+  "run_utc": "2026-08-13T05:15:53+00:00",
+  "claim": "R_dih(P3alt, K_b) = 2b-1 for all b (arXiv:2607.06817 Conjecture 4.9 at a=3)",
+  "scope": "LOWER bound verified for b=2..8; BOTH bounds verified at b=3 only; Corollary 5's orbit-equality premise verified (the Proposition 2.4 application is a citation). The general upper bound is NOT verified here \u2014 it rests on Dih(3)=Sym(3) plus Chvatal 1977 via [DD26, Theorem 4.13], a proof, not a computation.",
+  "group_facts": {
+    "dih3_order": 6,
+    "sym3_order": 6,
+    "dih3_equals_sym3": true,
+    "dih3_elements": [
+      [
+        0,
+        1,
+        2
+      ],
+      [
+        0,
+        2,
+        1
+      ],
+      [
+        1,
+        0,
+        2
+      ],
+      [
+        1,
+        2,
+        0
+      ],
+      [
+        2,
+        0,
+        1
+      ],
+      [
+        2,
+        1,
+        0
+      ]
+    ],
+    "dih4_order": 8,
+    "sym4_order": 24,
+    "dih4_equals_sym4": false
+  },
+  "checker_controls": [
+    {
+      "name": "all-red K_4 contains a red Dih(3)-embedded P3alt",
+      "expected": true,
+      "observed": true,
+      "pass": true
+    },
+    {
+      "name": "all-blue K_4 contains a blue K_4",
+      "expected": true,
+      "observed": true,
+      "pass": true
+    },
+    {
+      "name": "b=4 witness + planted red edge {1,2} contains the pattern",
+      "expected": true,
+      "observed": true,
+      "pass": true
+    },
+    {
+      "name": "path 0-1-2: NOT {id}-embeddable (ordered semantics)",
+      "expected": false,
+      "observed": false,
+      "pass": true
+    },
+    {
+      "name": "path 0-1-2: Dih(3)-embeddable",
+      "expected": true,
+      "observed": true,
+      "pass": true
+    }
+  ],
+  "lower_bounds": [
+    {
+      "b": 2,
+      "n_witness": 2,
+      "blocks": [
+        [
+          0,
+          1
+        ]
+      ],
+      "red_contains_dih3_P3alt": false,
+      "blue_contains_Kb": false,
+      "witness_valid": true,
+      "conclusion": "R_dih(P3alt, K_2) >= 3"
+    },
+    {
+      "b": 3,
+      "n_witness": 4,
+      "blocks": [
+        [
+          0,
+          1
+        ],
+        [
+          2,
+          3
+        ]
+      ],
+      "red_contains_dih3_P3alt": false,
+      "blue_contains_Kb": false,
+      "witness_valid": true,
+      "conclusion": "R_dih(P3alt, K_3) >= 5"
+    },
+    {
+      "b": 4,
+      "n_witness": 6,
+      "blocks": [
+        [
+          0,
+          1
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          4,
+          5
+        ]
+      ],
+      "red_contains_dih3_P3alt": false,
+      "blue_contains_Kb": false,
+      "witness_valid": true,
+      "conclusion": "R_dih(P3alt, K_4) >= 7"
+    },
+    {
+      "b": 5,
+      "n_witness": 8,
+      "blocks": [
+        [
+          0,
+          1
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          4,
+          5
+        ],
+        [
+          6,
+          7
+        ]
+      ],
+      "red_contains_dih3_P3alt": false,
+      "blue_contains_Kb": false,
+      "witness_valid": true,
+      "conclusion": "R_dih(P3alt, K_5) >= 9"
+    },
+    {
+      "b": 6,
+      "n_witness": 10,
+      "blocks": [
+        [
+          0,
+          1
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          4,
+          5
+        ],
+        [
+          6,
+          7
+        ],
+        [
+          8,
+          9
+        ]
+      ],
+      "red_contains_dih3_P3alt": false,
+      "blue_contains_Kb": false,
+      "witness_valid": true,
+      "conclusion": "R_dih(P3alt, K_6) >= 11"
+    },
+    {
+      "b": 7,
+      "n_witness": 12,
+      "blocks": [
+        [
+          0,
+          1
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          4,
+          5
+        ],
+        [
+          6,
+          7
+        ],
+        [
+          8,
+          9
+        ],
+        [
+          10,
+          11
+        ]
+      ],
+      "red_contains_dih3_P3alt": false,
+      "blue_contains_Kb": false,
+      "witness_valid": true,
+      "conclusion": "R_dih(P3alt, K_7) >= 13"
+    },
+    {
+      "b": 8,
+      "n_witness": 14,
+      "blocks": [
+        [
+          0,
+          1
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          4,
+          5
+        ],
+        [
+          6,
+          7
+        ],
+        [
+          8,
+          9
+        ],
+        [
+          10,
+          11
+        ],
+        [
+          12,
+          13
+        ]
+      ],
+      "red_contains_dih3_P3alt": false,
+      "blue_contains_Kb": false,
+      "witness_valid": true,
+      "conclusion": "R_dih(P3alt, K_8) >= 15"
+    }
+  ],
+  "b3_exhaustive": {
+    "n": 5,
+    "colorings_checked": 1024,
+    "colorings_avoiding_both": 0,
+    "all_contain_red_P3alt_or_blue_K3": true,
+    "conclusion": "R_dih(P3alt, K_3) <= 5"
+  },
+  "corollary5_orbit_check": {
+    "cyc3_order": 3,
+    "cyc3_orbit_size": 3,
+    "sym3_orbit_size": 3,
+    "orbits_equal": true,
+    "orbit_is_the_three_center_labelings": true,
+    "kb_orbit_singleton": [
+      {
+        "b": 2,
+        "dih_orbit_is_singleton": true,
+        "sym_orbit_is_singleton_checked_b_le_5": true
+      },
+      {
+        "b": 3,
+        "dih_orbit_is_singleton": true,
+        "sym_orbit_is_singleton_checked_b_le_5": true
+      },
+      {
+        "b": 4,
+        "dih_orbit_is_singleton": true,
+        "sym_orbit_is_singleton_checked_b_le_5": true
+      },
+      {
+        "b": 5,
+        "dih_orbit_is_singleton": true,
+        "sym_orbit_is_singleton_checked_b_le_5": true
+      },
+      {
+        "b": 6,
+        "dih_orbit_is_singleton": true,
+        "sym_orbit_is_singleton_checked_b_le_5": true
+      },
+      {
+        "b": 7,
+        "dih_orbit_is_singleton": true,
+        "sym_orbit_is_singleton_checked_b_le_5": true
+      },
+      {
+        "b": 8,
+        "dih_orbit_is_singleton": true,
+        "sym_orbit_is_singleton_checked_b_le_5": true
+      }
+    ],
+    "conclusion": "Cyc(3)-orbit of P3alt = Sym(3)-orbit (the 3 labeled 3-paths); K_b orbits are singletons \u2014 the premise Corollary 5 feeds to [DD26] Proposition 2.4. The Proposition 2.4 application itself is a citation."
+  },
+  "b3_exact": "R_dih(P3alt, K_3) = 5 (valid witness at n=4 + exhaustive check at n=5)",
+  "summary": {
+    "all_checks_pass": true,
+    "verdict": "LOWER BOUNDS VERIFIED for b=2..8; b=3 EXACT (both bounds); COROLLARY-5 ORBIT PREMISE VERIFIED"
+  }
+}
