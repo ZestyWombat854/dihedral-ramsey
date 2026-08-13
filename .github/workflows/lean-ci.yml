@@ -1,0 +1,27 @@
+name: Kernel-check TheoremB.lean
+
+on:
+  push:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - name: Install elan with the pinned toolchain
+        run: |
+          curl -sSfL https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh \
+            | sh -s -- -y --default-toolchain "$(cat lean-toolchain)"
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+      - name: Compile (kernel check) and audit axioms
+        run: |
+          lean TheoremB.lean | tee axioms.out
+          n=$(grep -c "depends on axioms" axioms.out)
+          test "$n" -eq 5
+          bad=$(grep "depends on axioms" axioms.out | grep -vc "\[propext, Classical.choice, Quot.sound\]" || true)
+          test "$bad" -eq 0
+          echo "kernel check OK: 5/5 theorems, axioms exactly [propext, Classical.choice, Quot.sound]"
