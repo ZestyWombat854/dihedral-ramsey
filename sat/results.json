@@ -1,0 +1,127 @@
+{
+  "script": "make_theorem_b_certificates.py",
+  "run_utc": "2026-08-13T06:31:14+00:00",
+  "provenance": "REGENERATED certificates (fresh solver runs, 2026-08-13). The producing run's originals were deleted after verification under its disk-discipline policy; same instances, same encoding, same tooling.",
+  "tools": {
+    "solver": "kissat 4.0.4",
+    "checker": "drat-trim"
+  },
+  "results": [
+    {
+      "b": 2,
+      "predicted_R": 3,
+      "sat_leg": {
+        "n": 2,
+        "clauses": 2,
+        "kissat_exit": 10,
+        "witness_valid": true,
+        "conclusion": "R_dih(P3alt,K_2) >= 3"
+      },
+      "unsat_leg": {
+        "n": 3,
+        "clauses": 12,
+        "kissat_exit": 20,
+        "drat_trim_verified": true,
+        "conclusion": "R_dih(P3alt,K_2) <= 3"
+      },
+      "exact": "R_dih(P3alt,K_2) = 3"
+    },
+    {
+      "b": 3,
+      "predicted_R": 5,
+      "sat_leg": {
+        "n": 4,
+        "clauses": 48,
+        "kissat_exit": 10,
+        "witness_valid": true,
+        "conclusion": "R_dih(P3alt,K_3) >= 5"
+      },
+      "unsat_leg": {
+        "n": 5,
+        "clauses": 120,
+        "kissat_exit": 20,
+        "drat_trim_verified": true,
+        "conclusion": "R_dih(P3alt,K_3) <= 5"
+      },
+      "exact": "R_dih(P3alt,K_3) = 5"
+    },
+    {
+      "b": 4,
+      "predicted_R": 7,
+      "sat_leg": {
+        "n": 6,
+        "clauses": 240,
+        "kissat_exit": 10,
+        "witness_valid": true,
+        "conclusion": "R_dih(P3alt,K_4) >= 7"
+      },
+      "unsat_leg": {
+        "n": 7,
+        "clauses": 490,
+        "kissat_exit": 20,
+        "drat_trim_verified": true,
+        "conclusion": "R_dih(P3alt,K_4) <= 7"
+      },
+      "exact": "R_dih(P3alt,K_4) = 7"
+    },
+    {
+      "b": 5,
+      "predicted_R": 9,
+      "sat_leg": {
+        "n": 8,
+        "clauses": 896,
+        "kissat_exit": 10,
+        "witness_valid": true,
+        "conclusion": "R_dih(P3alt,K_5) >= 9"
+      },
+      "unsat_leg": {
+        "n": 9,
+        "clauses": 1764,
+        "kissat_exit": 20,
+        "drat_trim_verified": true,
+        "conclusion": "R_dih(P3alt,K_5) <= 9"
+      },
+      "exact": "R_dih(P3alt,K_5) = 9"
+    },
+    {
+      "b": 6,
+      "predicted_R": 11,
+      "sat_leg": {
+        "n": 10,
+        "clauses": 3240,
+        "kissat_exit": 10,
+        "witness_valid": true,
+        "conclusion": "R_dih(P3alt,K_6) >= 11"
+      },
+      "unsat_leg": {
+        "n": 11,
+        "clauses": 6534,
+        "kissat_exit": 20,
+        "drat_trim_verified": true,
+        "conclusion": "R_dih(P3alt,K_6) <= 11"
+      },
+      "exact": "R_dih(P3alt,K_6) = 11"
+    },
+    {
+      "b": 7,
+      "predicted_R": 13,
+      "sat_leg": {
+        "n": 12,
+        "clauses": 12408,
+        "kissat_exit": 10,
+        "witness_valid": true,
+        "conclusion": "R_dih(P3alt,K_7) >= 13"
+      },
+      "unsat_leg": {
+        "n": 13,
+        "clauses": 25740,
+        "kissat_exit": 20,
+        "drat_trim_verified": true,
+        "conclusion": "R_dih(P3alt,K_7) <= 13"
+      },
+      "exact": "R_dih(P3alt,K_7) = 13"
+    }
+  ],
+  "all_ok": true,
+  "verdict": "6/6 exact: witnesses independently validated, proofs drat-trim VERIFIED"
+}

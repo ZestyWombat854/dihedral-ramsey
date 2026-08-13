@@ -1,0 +1,5 @@
+c decoded witness for n=2 (colour1=red, colour2=blue)
+c red  (colour 1): [(0, 1)]
+c blue (colour 2): []
+c independent check: no Dih(3)-embedded P3alt in red: True; no Dih(2)-embedded K_2 in blue: True
+v -1 0

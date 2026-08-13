@@ -1,0 +1,4 @@
+c Theorem B raw encoding: (P3alt,Dih(3)) vs (K_2,Dih(2)), n=2; SAT expected (witness leg); regenerated 2026-08-13
+p cnf 1 2
+-1 0
+-1 0

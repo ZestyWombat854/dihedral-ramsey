@@ -21,7 +21,7 @@ formal proof in this package.
 | §6, Lemma 3 | Dih(3) = Sym(3) | Lean: `lemma3_dih3_eq_sym3`; Python: generator closure | **Lean-proved** + **Python-verified** |
 | §7, Theorem 4 | R_dih(P3alt, K_b) = 2b-1 | Upper bound: **citation** (Chvatal 1977 via DD26 Thm 4.13). Lower bound: **Lean-proved** (`theoremB_lowerBound`, every b >= 1) |
 | §8, Corollary 5 | R_cyc(P3alt, K_b) = 2b-1 | Orbit equality: **Python-verified** (`corollary5_orbit_check`: Cyc(3)-orbit = Sym(3)-orbit = the 3 center-labelings; K_b orbits singleton). Proposition 2.4 application: **citation** |
-| §9, SAT table | 2b-1 matches for b=2..7 | DRAT-certified (external, not in this package) | **externally verified** |
+| §9, SAT table | 2b-1 matches for b=2..7 | CNF + DRAT certificates in `sat/` (regenerated 2026-08-13), each proof drat-trim VERIFIED, each SAT witness re-checked by the independent embedding checker | **DRAT-certified (in package; regenerated — see below)** |
 | §9, b=3 exact | R_dih(P3alt, K_3) = 5 | Python: all 1,024 colorings of K_5 | **Python-verified** (both bounds) |
 
 ## What is not verified in this package
@@ -32,9 +32,14 @@ formal proof in this package.
 - **Proposition 2.1 and 2.4 from DD26.** Used in the Sym-collapse step
   (Theorem 4) and the cyclic corollary (Corollary 5). Cited, not
   reproved.
-- **The SAT/DRAT certificates.** Produced during adversarial review of
-  the internal write-up. Not included in this package; the Python checker
-  independently covers b=2..8 lower bounds and b=3 both bounds.
+- **The SAT/DRAT certificates in `sat/` are regenerated, not original.**
+  The review-time originals were deleted under the producing run's disk
+  policy. `sat/` contains fresh 2026-08-13 runs of the same instances
+  (same encoding, same tooling: kissat 4.0.4 + drat-trim), each
+  drat-trim-verified. The regenerated certificates fully cover the
+  mathematical claim; what cannot be re-checked is the historical fact
+  that the original review-time runs happened as described. The Python
+  checker independently covers b=2..8 lower bounds and b=3 both bounds.
 
 ## Lean trust boundary
 

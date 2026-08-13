@@ -1,0 +1,14 @@
+c Theorem B raw encoding: (P3alt,Dih(3)) vs (K_2,Dih(2)), n=3; UNSAT expected (proof leg); regenerated 2026-08-13
+p cnf 3 12
+2 3 0
+1 3 0
+3 2 0
+1 2 0
+3 1 0
+2 1 0
+-1 0
+-1 0
+-2 0
+-2 0
+-3 0
+-3 0

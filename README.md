@@ -28,6 +28,8 @@ Stosic, arXiv:2604.16188).
 | `verify_theorem_b.py` | Python checker (stdlib only): lower bounds for b = 2..8, both bounds at b = 3, plus Corollary 5's orbit-equality premise. |
 | `verify_theorem_b_result.json` | The Python checker's full output. |
 | `VERIFICATION_MAP.md` | Claim-by-claim map: which preprint claims are Lean-proved, Python-verified, or citation-only. Includes SHA-256 hashes, trust boundaries, and what is not verified. |
+| `sat/` | CNF + DRAT certificates for the b = 2..7 SAT recomputation on the raw dihedral encoding — **regenerated 2026-08-13** (the originals were deleted by the producing run's disk policy; see `sat/README.md`). Each proof drat-trim-verified, each witness independently re-checked. |
+| `make_theorem_b_certificates.py` | Generator for `sat/`: encodes the instances, runs kissat, drat-trims the proofs, re-checks the witnesses. |
 | `lean-toolchain` | Toolchain pin (`leanprover/lean4:v4.12.0`) so `elan` auto-selects the right Lean in a clone. |
 | `LICENSE` | MIT. |
 
